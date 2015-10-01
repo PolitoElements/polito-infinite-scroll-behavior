@@ -1,0 +1,40 @@
+<script>
+    if (typeof(Polito) != "object") {
+        var Polito = {};
+    }
+    Polito.InfiniteScrollBehavior = {
+        attached: function() {
+            this.async(this._setupListeners);
+            this._verifyIfNearEnd(this);
+        },
+        nearEndOfPage: function() {},
+        _nearEndOfPage: function() {
+            this.debounce("near-end-of-page", this.nearEndOfPage, 100);
+        },
+        _setupListeners: function() {
+            var polito = this;
+            window.addEventListener('scroll', function(e) {
+                polito._verifyIfNearEnd(polito);
+            });
+        },
+        _verifyIfNearEnd: function(polito) {
+            var body = document.body,
+                html = document.documentElement;
+
+            var pageHeight = Math.max(body.scrollHeight, body.offsetHeight,
+                html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+            var scrollPosition = window.scrollY;
+
+            if (typeof scrollPosition === "undefined") {
+                scrollPosition = document.documentElement.scrollTop;
+            }
+
+            var nearEnd = scrollPosition + window.innerHeight * 1.5 > pageHeight;
+
+            if (nearEnd) {
+                polito._nearEndOfPage();
+            }
+        }
+    }
+</script>
